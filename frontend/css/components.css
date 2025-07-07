@@ -419,6 +419,7 @@
     cursor: pointer;
     gap: 12px;
     width: 100%;
+    pointer-events: auto; /* Zorg dat clicks worden geregistreerd */
 }
 
 .cao-checkbox {
@@ -426,7 +427,21 @@
     height: 18px;
     accent-color: var(--primary-color);
     cursor: pointer;
+    pointer-events: auto; /* Expliciet toestaan van pointer events */
+    position: relative; /* Voor z-index */
+    z-index: 1;
 }
+
+/* Zorg dat parent containers geen pointer events blokkeren */
+.cao-selector-list {
+    pointer-events: auto;
+}
+
+.cao-selector-item {
+    pointer-events: auto;
+}
+
+
 
 .cao-info {
     flex: 1;

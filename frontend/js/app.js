@@ -46,6 +46,18 @@ class CAOTracker {
     }
     
     initializeComponents() {
+        // Wait for DOM to be fully loaded before initializing components
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.doInitializeComponents();
+            });
+        } else {
+            // DOM is already loaded
+            this.doInitializeComponents();
+        }
+    }
+    
+    doInitializeComponents() {
         try {
             // Initialize chat component
             if (window.ChatManager) {
@@ -66,7 +78,7 @@ class CAOTracker {
             // Initialize tracker component
             if (window.TrackerManager) {
                 this.trackerManager = new TrackerManager();
-                // Initialize the tracker manager immediately
+                // Initialize the tracker manager after DOM is ready
                 this.trackerManager.init();
                 console.log('Tracker manager initialized');
             } else {
@@ -76,16 +88,17 @@ class CAOTracker {
             // Force initial render of tracker components with error handling
             setTimeout(() => {
                 try {
-                    if (this.trackerManager && typeof this.trackerManager.renderCaoList === 'function') {
-                        this.trackerManager.renderCaoList();
-                    }
-                    if (this.trackerManager && typeof this.trackerManager.updateCurrentCaoInfo === 'function') {
-                        this.trackerManager.updateCurrentCaoInfo();
-                    }
+                    this.trackerManager.renderCaoList();
+                    this.trackerManager.updateCurrentCaoInfo();
                 } catch (error) {
                     console.warn('Error during tracker initialization:', error.message);
                 }
             }, 200);
+            
+            // Export trackerManager to window for global access
+            if (this.trackerManager) {
+                window.trackerManager = this.trackerManager;
+            }
             
             console.log('CAO Tracker components initialized successfully');
         } catch (error) {

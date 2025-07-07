@@ -1,6 +1,6 @@
 # CAO Tracker - Project Plan
 
-## Sprint 1: Frontend Implementatie (Week 1) - VOLTOOID
+## Sprint 1: Frontend Implementatie (Week 1) - ✅ VOLTOOID
 
 ### Hoofddoelen
 - [x] GitHub repository aanmaken
@@ -11,6 +11,9 @@
 - [x] Documentenlijst met uitgebreide filters
 - [x] CAO Tracker met interactieve checklist
 - [x] Frontend-only modus voor testing
+- [x] **EXTRA**: CAO Selectie Interface volledig geïmplementeerd
+- [x] **EXTRA**: Backend API basis werkend
+- [x] **EXTRA**: Event handling optimalisatie en bug fixes
 
 ### Taken Sprint 1
 
@@ -39,15 +42,18 @@
 - [ ] Schema voor tracking status
 - [ ] Migratie scripts
 
-## Sprint 2: CAO Database & Backend Setup (Week 2) - IN PROGRESS
+## Sprint 2: CAO Database & Backend Setup (Week 2) - ✅ VOLTOOID
 
 ### Hoofddoelen
-- [ ] CAO Database voor Nederlandse zorg-CAO's opzetten
-- [ ] CAO Selectie interface implementeren
-- [ ] Backend API basis opzetten
-- [ ] Database schema ontwerpen
-- [ ] GitHub repository aanmaken
-- [ ] Backend integraties voor CAO selectie
+- [x] CAO Database voor Nederlandse zorg-CAO's opzetten
+- [x] CAO Selectie interface implementeren
+- [x] Backend API basis opzetten
+- [x] Database schema ontwerpen
+- [x] GitHub repository aanmaken
+- [x] Backend integraties voor CAO selectie
+- [x] **EXTRA**: Event handling optimalisatie
+- [x] **EXTRA**: Stack overflow fixes
+- [x] **EXTRA**: Production-ready stabiliteit
 
 ### Taken Sprint 2
 

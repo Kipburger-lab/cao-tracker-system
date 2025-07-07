@@ -16,11 +16,14 @@
 - [x] CAO Tracker tab omgezet naar interactieve checklist
 - [x] Context.md bijgewerkt met nieuwe specificaties
 
-### 🔄 In Progress - Sprint 2
-- [ ] CAO Database voor Nederlandse zorg-CAO's opzetten
-- [ ] CAO Selectie interface implementeren
+### ✅ Voltooid - Sprint 2
+- [x] CAO Database voor Nederlandse zorg-CAO's opzetten
+- [x] CAO Selectie interface implementeren
 - [x] GitHub repository aanmaken met PowerShell
-- [ ] Backend API basis opzetten
+- [x] Backend API basis opzetten
+- [x] Event handling optimalisatie
+- [x] Stack overflow preventie
+- [x] Production-ready stabiliteit
 
 ### 📋 To Do - Sprint 1 (Afronding)
 - [ ] Frontend testing en debugging
@@ -30,24 +33,28 @@
 
 ## Sprint 2: CAO Database & Backend Setup (Week 2)
 
-### 📋 Prioriteit 1 - CAO Database
-- [ ] Research Nederlandse zorg-CAO's (FWG, FNV, CNV bronnen)
-- [ ] CAO database structuur ontwerpen
-- [ ] CAO gegevens verzamelen en structureren
-- [ ] Database seeding scripts maken
+### ✅ Prioriteit 1 - CAO Database - VOLTOOID
+- [x] Research Nederlandse zorg-CAO's (FWG, FNV, CNV bronnen)
+- [x] CAO database structuur ontwerpen
+- [x] CAO gegevens verzamelen en structureren
+- [x] Database seeding scripts maken
 
-### 📋 Prioriteit 2 - CAO Selectie Interface
-- [ ] CAO lijst component in frontend ontwikkelen
-- [ ] Selectie functionaliteit (checkboxes/multi-select)
-- [ ] Filter opties (sector, regio, geldigheid)
-- [ ] Zoek functionaliteit implementeren
-- [ ] Geselecteerde CAO's opslaan in localStorage
+### ✅ Prioriteit 2 - CAO Selectie Interface - VOLTOOID
+- [x] CAO lijst component in frontend ontwikkelen
+- [x] Selectie functionaliteit (checkboxes/multi-select)
+- [x] Filter opties (sector, regio, geldigheid)
+- [x] Zoek functionaliteit implementeren
+- [x] Geselecteerde CAO's opslaan in localStorage
+- [x] **EXTRA**: Event handling optimalisatie
+- [x] **EXTRA**: Stack overflow preventie
+- [x] **EXTRA**: Checkbox state management verbetering
 
-### 📋 Prioriteit 3 - Backend Setup
-- [ ] Flask backend server opzetten
-- [ ] CAO API endpoints (/api/caos, /api/caos/select)
-- [ ] Database connectie en modellen
-- [ ] CORS configuratie voor frontend
+### ✅ Prioriteit 3 - Backend Setup - VOLTOOID
+- [x] Flask backend server opzetten
+- [x] CAO API endpoints (/api/caos, /api/caos/select)
+- [x] Database connectie en modellen
+- [x] CORS configuratie voor frontend
+- [x] **EXTRA**: Production-ready stabiliteit
 
 ### 📋 Prioriteit 4 - GitHub Repository ✅ VOLTOOID
 - [x] Repository aanmaken met PowerShell

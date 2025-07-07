@@ -214,14 +214,25 @@ class TrackerManager {
         this.init();
     }
     
-    init() {
-        this.setupEventListeners();
-        this.loadSavedCAOSelection();
-        this.renderCaoSelector();
-        this.renderCaoList();
-        this.updateCurrentCaoInfo();
-        this.updateStats();
-        this.loadSavedState();
+    async init() {
+        try {
+            // 1. Load saved data eerst
+            await this.loadSavedCAOSelection();
+            
+            // 2. Render UI
+            this.renderCaoSelector();
+            this.renderCaoList();
+            this.updateCurrentCaoInfo();
+            this.updateStats();
+            this.loadSavedState();
+            
+            // 3. Setup event listeners LAATSTE (na rendering)
+            this.setupEventListeners();
+            
+            console.log('TrackerManager initialized successfully');
+        } catch (error) {
+            console.error('Error initializing TrackerManager:', error);
+        }
     }
     
     getSelectedCAOs() {
@@ -247,38 +258,81 @@ class TrackerManager {
     }
     
     toggleCAOSelection(caoId) {
+        console.log('Toggle called for:', caoId); // Debug log
+        
         const cao = this.allCAOs.find(c => c.id === caoId);
-        if (cao) {
-            cao.selected = !cao.selected;
-            this.caoList = this.getSelectedCAOs();
-            this.renderCaoSelector();
-            this.renderCaoList();
-            this.updateCurrentCaoInfo();
-            this.saveCAOSelection();
+        if (!cao) {
+            console.error('CAO not found:', caoId);
+            return;
+        }
+        
+        // Toggle de state
+        cao.selected = !cao.selected;
+        
+        // Update andere dependencies
+        this.caoList = this.getSelectedCAOs();
+        
+        // Update UI - maar alleen de specifieke checkbox
+        this.updateCheckboxState(caoId, cao.selected);
+        
+        // Update andere components
+        this.renderCaoList();
+        this.updateCurrentCaoInfo();
+        this.saveCAOSelection();
+        
+        console.log('CAO state updated:', cao.selected); // Debug log
+    }
+    
+    updateCheckboxState(caoId, isSelected) {
+        const checkbox = document.querySelector(`input[data-cao-id="${caoId}"]`);
+        if (checkbox) {
+            checkbox.checked = isSelected;
+            
+            // Update parent item styling zonder re-render
+            const item = checkbox.closest('.cao-selector-item');
+            if (item) {
+                if (isSelected) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            }
+            
+            // Update selection count
+            const selectedCount = this.allCAOs.filter(cao => cao.selected).length;
+            const countElement = document.querySelector('.selected-count');
+            if (countElement) {
+                countElement.textContent = `${selectedCount} CAO's geselecteerd`;
+            }
         }
     }
     
     async saveCAOSelection() {
         const selectedIds = this.allCAOs.filter(cao => cao.selected).map(cao => cao.id);
         
-        // Save to localStorage for immediate feedback
-        localStorage.setItem('selectedCAOs', JSON.stringify(selectedIds));
+        // Save to localStorage immediately
+        try {
+            localStorage.setItem('selectedCAOs', JSON.stringify(selectedIds));
+            console.log('Saved to localStorage:', selectedIds);
+        } catch (error) {
+            console.error('Error saving to localStorage:', error);
+        }
         
-        // Save to backend for persistence
+        // Save to backend
         try {
             const response = await fetch('/api/cao-selection', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ selectedCAOs: selectedIds })
             });
             
-            if (!response.ok) {
-                console.warn('Failed to save CAO selection to backend');
+            if (response.ok) {
+                console.log('Saved to backend successfully');
+            } else {
+                console.warn('Backend save failed:', response.status);
             }
         } catch (error) {
-            console.warn('Error saving CAO selection to backend:', error);
+            console.warn('Error saving to backend:', error);
         }
     }
 
@@ -312,54 +366,106 @@ class TrackerManager {
         }
     }
     
+    removeEventListeners() {
+        // Remove existing event listeners to prevent duplicates
+        const startScanBtn = document.getElementById('startScanBtn');
+        if (startScanBtn && this.startScanHandler) {
+            startScanBtn.removeEventListener('click', this.startScanHandler);
+        }
+        
+        const container = document.getElementById('caoSelectorContainer');
+        if (container && this.containerChangeHandler) {
+            container.removeEventListener('change', this.containerChangeHandler);
+        }
+        
+        const sectorFilter = document.getElementById('sectorFilter');
+        if (sectorFilter && this.sectorFilterHandler) {
+            sectorFilter.removeEventListener('change', this.sectorFilterHandler);
+        }
+        
+        const caoSearch = document.getElementById('caoSearch');
+        if (caoSearch && this.searchHandler) {
+            caoSearch.removeEventListener('input', this.searchHandler);
+        }
+        
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler);
+        }
+    }
+    
     setupEventListeners() {
+        console.log('Setting up event listeners...'); // Debug
+        
+        // Remove existing listeners to prevent duplicates
+        this.removeEventListeners();
+        
         // Start Scan button
         const startScanBtn = document.getElementById('startScanBtn');
         if (startScanBtn) {
-            startScanBtn.addEventListener('click', () => {
+            this.startScanHandler = () => {
                 this.startScan();
-            });
+            };
+            startScanBtn.addEventListener('click', this.startScanHandler);
         }
         
-        // CAO Selection events
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('cao-checkbox')) {
-                const caoId = e.target.dataset.caoId;
-                this.toggleCAOSelection(caoId);
-            }
-        });
+        // Event delegation op container niveau voor CAO checkboxes
+        const container = document.getElementById('caoSelectorContainer');
+        console.log('Container found:', container); // Debug
         
-        // Filter events
-        document.addEventListener('change', (e) => {
-            if (e.target.id === 'sectorFilter') {
+        if (container) {
+            // Event delegation voor CAO checkboxes
+            this.containerChangeHandler = (e) => {
+                console.log('Change event triggered!'); // Debug
+                if (e.target && e.target.classList.contains('cao-checkbox')) {
+                    e.stopPropagation(); // Stop event bubbling!
+                    console.log('Checkbox change detected:', e.target.dataset.caoId);
+                    
+                    const caoId = e.target.dataset.caoId;
+                    if (caoId) {
+                        this.toggleCAOSelection(caoId);
+                    } else {
+                        console.error('No cao-id found on checkbox');
+                    }
+                }
+            };
+            container.addEventListener('change', this.containerChangeHandler);
+        }
+        
+        // Filter events - ALLEEN voor sectorFilter
+        const sectorFilter = document.getElementById('sectorFilter');
+        if (sectorFilter) {
+            this.sectorFilterHandler = (e) => {
                 this.filters.sector = e.target.value;
                 this.renderCaoSelector();
-            }
-        });
+            };
+            sectorFilter.addEventListener('change', this.sectorFilterHandler);
+        }
         
-        document.addEventListener('input', (e) => {
-            if (e.target.id === 'caoSearch') {
+        // Search events
+        const caoSearch = document.getElementById('caoSearch');
+        if (caoSearch) {
+            this.searchHandler = (e) => {
                 this.filters.search = e.target.value;
                 this.renderCaoSelector();
-            }
-        });
+            };
+            caoSearch.addEventListener('input', this.searchHandler);
+        }
         
         // Checklist item details toggle
-        document.addEventListener('click', (e) => {
+        this.documentClickHandler = (e) => {
             if (e.target.closest('.checklist-header')) {
                 const checklistItem = e.target.closest('.checklist-item');
                 this.toggleChecklistDetails(checklistItem);
             }
-        });
-        
-        // Details buttons
-        document.addEventListener('click', (e) => {
+            
+            // Details buttons
             if (e.target.closest('.checklist-actions button')) {
                 const checklistItem = e.target.closest('.checklist-item');
                 const agentId = checklistItem.dataset.agent;
                 this.showAgentDetails(agentId);
             }
-        });
+        };
+        document.addEventListener('click', this.documentClickHandler);
     }
     
     renderCaoSelector() {
@@ -411,6 +517,24 @@ class TrackerManager {
                 `).join('')}
             </div>
         `;
+        
+        // Re-attach event listeners voor filter/search
+        // (checkboxes worden afgehandeld via event delegation op container)
+        this.attachFilterListeners();
+    }
+    
+    attachFilterListeners() {
+        const sectorFilter = document.getElementById('sectorFilter');
+        if (sectorFilter && this.sectorFilterHandler) {
+            sectorFilter.removeEventListener('change', this.sectorFilterHandler);
+            sectorFilter.addEventListener('change', this.sectorFilterHandler);
+        }
+        
+        const caoSearch = document.getElementById('caoSearch');
+        if (caoSearch && this.searchHandler) {
+            caoSearch.removeEventListener('input', this.searchHandler);
+            caoSearch.addEventListener('input', this.searchHandler);
+        }
     }
     
     getSectorDisplayName(sector) {
@@ -986,7 +1110,26 @@ class TrackerManager {
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+    
+    // Debug method om checkbox states te controleren
+    debugCheckboxStates() {
+        const checkboxes = document.querySelectorAll('.cao-checkbox');
+        console.log('Checkbox states:');
+        checkboxes.forEach(cb => {
+            console.log(`${cb.dataset.caoId}: ${cb.checked}`);
+        });
+        
+        console.log('Data states:');
+        this.allCAOs.forEach(cao => {
+            console.log(`${cao.id}: ${cao.selected}`);
+        });
+    }
 }
 
 // Export for use in main app
 window.TrackerManager = TrackerManager;
+
+// Also export instance for direct access
+if (window.app && window.app.trackerManager) {
+    window.trackerManager = window.app.trackerManager;
+}
