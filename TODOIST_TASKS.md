@@ -19,7 +19,7 @@
 ### 🔄 In Progress - Sprint 2
 - [ ] CAO Database voor Nederlandse zorg-CAO's opzetten
 - [ ] CAO Selectie interface implementeren
-- [ ] GitHub repository aanmaken met PowerShell
+- [x] GitHub repository aanmaken met PowerShell
 - [ ] Backend API basis opzetten
 
 ### 📋 To Do - Sprint 1 (Afronding)
@@ -49,12 +49,13 @@
 - [ ] Database connectie en modellen
 - [ ] CORS configuratie voor frontend
 
-### 📋 Prioriteit 4 - GitHub Repository
-- [ ] Repository aanmaken met PowerShell
-- [ ] Initiële commit met huidige code
-- [ ] Branch strategie opzetten (main, develop, feature branches)
-- [ ] README en documentatie uploaden
-- [ ] .gitignore configureren
+### 📋 Prioriteit 4 - GitHub Repository ✅ VOLTOOID
+- [x] Repository aanmaken met PowerShell
+- [x] Initiële commit met huidige code
+- [x] Branch strategie opzetten (master, develop, feature branches)
+- [x] README en documentatie uploaden
+- [x] .gitignore configureren
+- [x] GITHUB_SETUP.md met workflow instructies
 
 ## Sprint 3: Integratie & Testing (Week 3)
 
