@@ -5,36 +5,164 @@ class TrackerManager {
         this.checklistItems = [];
         this.scanInProgress = false;
         this.currentStep = 0;
-        this.caoList = [
+        this.allCAOs = [
+            // Ziekenhuizen
             {
-                id: 'vvt',
-                name: 'VVT (Verpleeg-, Verzorgingshuizen en Thuiszorg)',
+                id: 'cao_ziekenhuizen_nvz',
+                name: 'CAO Ziekenhuizen (NVZ)',
+                sector: 'ziekenhuis',
+                organisatie: 'NVZ',
+                vakbond: 'FNV, CNV, FWG',
                 status: 'pending',
                 progress: 0,
-                priority: 1
+                priority: 1,
+                selected: true
             },
             {
-                id: 'vgn',
-                name: 'VGN (Vereniging Gehandicaptenzorg Nederland)',
+                id: 'cao_academische_ziekenhuizen',
+                name: 'CAO Academische Ziekenhuizen (NFU)',
+                sector: 'ziekenhuis',
+                organisatie: 'NFU',
+                vakbond: 'FNV, CNV, FWG',
                 status: 'pending',
                 progress: 0,
-                priority: 2
+                priority: 2,
+                selected: false
             },
             {
-                id: 'ggz',
-                name: 'GGZ (Geestelijke Gezondheidszorg)',
+                id: 'cao_umc',
+                name: 'CAO UMC\'s',
+                sector: 'ziekenhuis',
+                organisatie: 'NFU',
+                vakbond: 'FNV, CNV, FWG',
                 status: 'pending',
                 progress: 0,
-                priority: 3
+                priority: 3,
+                selected: false
+            },
+            // Verpleging & Verzorging
+            {
+                id: 'cao_verpleeghuizen_actiz',
+                name: 'CAO Verpleeg- en Verzorgingshuizen (Actiz)',
+                sector: 'verpleging',
+                organisatie: 'Actiz',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 4,
+                selected: true
             },
             {
-                id: 'zkh',
-                name: 'ZKH (Ziekenhuizen)',
+                id: 'cao_thuiszorg_actiz',
+                name: 'CAO Thuiszorg (Actiz)',
+                sector: 'verpleging',
+                organisatie: 'Actiz',
+                vakbond: 'FNV, CNV, FWG',
                 status: 'pending',
                 progress: 0,
-                priority: 4
+                priority: 5,
+                selected: false
+            },
+            {
+                id: 'cao_gehandicaptenzorg_vgn',
+                name: 'CAO Gehandicaptenzorg (VGN)',
+                sector: 'verpleging',
+                organisatie: 'VGN',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 6,
+                selected: true
+            },
+            // GGZ & Verslavingszorg
+            {
+                id: 'cao_ggz_nederland',
+                name: 'CAO GGZ (GGZ Nederland)',
+                sector: 'ggz',
+                organisatie: 'GGZ Nederland',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 7,
+                selected: true
+            },
+            {
+                id: 'cao_verslavingszorg',
+                name: 'CAO Verslavingszorg',
+                sector: 'ggz',
+                organisatie: 'Verslavingszorg Nederland',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 8,
+                selected: false
+            },
+            // Huisartsen & Eerstelijn
+            {
+                id: 'cao_huisartsenzorg_lhv',
+                name: 'CAO Huisartsenzorg (LHV)',
+                sector: 'eerstelijn',
+                organisatie: 'LHV',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 9,
+                selected: false
+            },
+            {
+                id: 'cao_apotheken_knmp',
+                name: 'CAO Apotheken (KNMP)',
+                sector: 'eerstelijn',
+                organisatie: 'KNMP',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 10,
+                selected: false
+            },
+            // Overige Zorg
+            {
+                id: 'cao_jeugdzorg',
+                name: 'CAO Jeugdzorg',
+                sector: 'overig',
+                organisatie: 'Jeugdzorg Nederland',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 11,
+                selected: false
+            },
+            {
+                id: 'cao_ambulancezorg',
+                name: 'CAO Ambulancezorg',
+                sector: 'overig',
+                organisatie: 'Ambulancezorg Nederland',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 12,
+                selected: false
+            },
+            {
+                id: 'cao_kraamzorg',
+                name: 'CAO Kraamzorg',
+                sector: 'overig',
+                organisatie: 'Kraamzorg Nederland',
+                vakbond: 'FNV, CNV, FWG',
+                status: 'pending',
+                progress: 0,
+                priority: 13,
+                selected: false
             }
         ];
+        
+        this.filters = {
+            sector: '',
+            status: 'alle',
+            search: ''
+        };
+        
+        this.caoList = this.getSelectedCAOs();
         this.currentCaoIndex = 0;
         this.agents = {
             'analist': {
@@ -88,10 +216,60 @@ class TrackerManager {
     
     init() {
         this.setupEventListeners();
+        this.renderCaoSelector();
         this.renderCaoList();
         this.updateCurrentCaoInfo();
         this.updateStats();
         this.loadSavedState();
+    }
+    
+    getSelectedCAOs() {
+        return this.allCAOs.filter(cao => cao.selected);
+    }
+    
+    getFilteredCAOs() {
+        let filtered = this.allCAOs;
+        
+        if (this.filters.sector) {
+            filtered = filtered.filter(cao => cao.sector === this.filters.sector);
+        }
+        
+        if (this.filters.search) {
+            const searchTerm = this.filters.search.toLowerCase();
+            filtered = filtered.filter(cao => 
+                cao.name.toLowerCase().includes(searchTerm) ||
+                cao.organisatie.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        return filtered;
+    }
+    
+    toggleCAOSelection(caoId) {
+        const cao = this.allCAOs.find(c => c.id === caoId);
+        if (cao) {
+            cao.selected = !cao.selected;
+            this.caoList = this.getSelectedCAOs();
+            this.renderCaoSelector();
+            this.renderCaoList();
+            this.updateCurrentCaoInfo();
+            this.saveCAOSelection();
+        }
+    }
+    
+    saveCAOSelection() {
+        const selectedIds = this.allCAOs.filter(cao => cao.selected).map(cao => cao.id);
+        localStorage.setItem('selectedCAOs', JSON.stringify(selectedIds));
+    }
+    
+    loadSavedCAOSelection() {
+        const savedSelection = JSON.parse(localStorage.getItem('selectedCAOs') || '[]');
+        if (savedSelection.length > 0) {
+            this.allCAOs.forEach(cao => {
+                cao.selected = savedSelection.includes(cao.id);
+            });
+            this.caoList = this.getSelectedCAOs();
+        }
     }
     
     setupEventListeners() {
@@ -102,6 +280,29 @@ class TrackerManager {
                 this.startScan();
             });
         }
+        
+        // CAO Selection events
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('cao-checkbox')) {
+                const caoId = e.target.dataset.caoId;
+                this.toggleCAOSelection(caoId);
+            }
+        });
+        
+        // Filter events
+        document.addEventListener('change', (e) => {
+            if (e.target.id === 'sectorFilter') {
+                this.filters.sector = e.target.value;
+                this.renderCaoSelector();
+            }
+        });
+        
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'caoSearch') {
+                this.filters.search = e.target.value;
+                this.renderCaoSelector();
+            }
+        });
         
         // Checklist item details toggle
         document.addEventListener('click', (e) => {
@@ -119,6 +320,68 @@ class TrackerManager {
                 this.showAgentDetails(agentId);
             }
         });
+    }
+    
+    renderCaoSelector() {
+        const container = document.getElementById('caoSelectorContainer');
+        if (!container) return;
+        
+        const filteredCAOs = this.getFilteredCAOs();
+        const selectedCount = this.allCAOs.filter(cao => cao.selected).length;
+        
+        container.innerHTML = `
+            <div class="cao-selector-header">
+                <h3>CAO Selectie voor Analyse</h3>
+                <div class="cao-selector-controls">
+                    <div class="filter-group">
+                        <label for="sectorFilter">Sector:</label>
+                        <select id="sectorFilter">
+                            <option value="">Alle sectoren</option>
+                            <option value="ziekenhuis" ${this.filters.sector === 'ziekenhuis' ? 'selected' : ''}>Ziekenhuizen</option>
+                            <option value="verpleging" ${this.filters.sector === 'verpleging' ? 'selected' : ''}>Verpleging & Verzorging</option>
+                            <option value="ggz" ${this.filters.sector === 'ggz' ? 'selected' : ''}>GGZ & Verslavingszorg</option>
+                            <option value="eerstelijn" ${this.filters.sector === 'eerstelijn' ? 'selected' : ''}>Huisartsen & Eerstelijn</option>
+                            <option value="overig" ${this.filters.sector === 'overig' ? 'selected' : ''}>Overige Zorg</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label for="caoSearch">Zoeken:</label>
+                        <input type="text" id="caoSearch" placeholder="Zoek CAO's..." value="${this.filters.search}">
+                    </div>
+                </div>
+                <div class="selection-summary">
+                    <span class="selected-count">${selectedCount} CAO's geselecteerd</span>
+                </div>
+            </div>
+            <div class="cao-selector-list">
+                ${filteredCAOs.map(cao => `
+                    <div class="cao-selector-item ${cao.selected ? 'selected' : ''}">
+                        <label class="cao-checkbox-label">
+                            <input type="checkbox" class="cao-checkbox" data-cao-id="${cao.id}" ${cao.selected ? 'checked' : ''}>
+                            <div class="cao-info">
+                                <div class="cao-name">${cao.name}</div>
+                                <div class="cao-details">
+                                    <span class="cao-sector">${this.getSectorDisplayName(cao.sector)}</span>
+                                    <span class="cao-org">${cao.organisatie}</span>
+                                    <span class="cao-vakbond">${cao.vakbond}</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+    
+    getSectorDisplayName(sector) {
+        const sectorNames = {
+            'ziekenhuis': 'Ziekenhuizen',
+            'verpleging': 'Verpleging & Verzorging',
+            'ggz': 'GGZ & Verslavingszorg',
+            'eerstelijn': 'Huisartsen & Eerstelijn',
+            'overig': 'Overige Zorg'
+        };
+        return sectorNames[sector] || sector;
     }
     
     async startScan() {

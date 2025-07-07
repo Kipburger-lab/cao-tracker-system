@@ -1,5 +1,39 @@
 /* CAO Tracker - Hoofdstijlen */
 
+:root {
+    /* Primary Colors */
+    --primary-color: #7461c3;
+    --primary-light: #e8e4f3;
+    --secondary-color: #667eea;
+    
+    /* Text Colors */
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    
+    /* Border Colors */
+    --border-color: #ddd;
+    --border-light: #e9ecef;
+    
+    /* Background Colors */
+    --background-light: #f8f9fa;
+    --card-background: #ffffff;
+    --hover-background: #f1f3f4;
+    
+    /* Status Colors */
+    --status-pending: #f39c12;
+    --status-in-progress: #3498db;
+    --status-completed: #27ae60;
+    --status-error: #e74c3c;
+    
+    /* Additional Colors for CAO Selector */
+    --success-color: #27ae60;
+    --success-light: #d5f4e6;
+    --info-color: #3498db;
+    --info-light: #d6eaf8;
+    --warning-color: #f39c12;
+    --warning-light: #fdeaa7;
+}
+
 /* Reset en basis styling */
 * {
     margin: 0;

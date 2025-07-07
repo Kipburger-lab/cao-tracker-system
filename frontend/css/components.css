@@ -321,6 +321,154 @@
     margin-top: 0.5rem;
 }
 
+/* CAO Selector Components */
+.cao-selector-section {
+    margin-bottom: 30px;
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.cao-selector-header {
+    margin-bottom: 20px;
+}
+
+.cao-selector-header h3 {
+    margin: 0 0 15px 0;
+    color: var(--text-primary);
+    font-size: 1.4em;
+}
+
+.cao-selector-controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-group, .search-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label, .search-group label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.filter-group select, .search-group input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: white;
+    font-size: 0.9em;
+    min-width: 200px;
+}
+
+.filter-group select:focus, .search-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(116, 97, 195, 0.2);
+}
+
+.selection-summary {
+    padding: 10px 15px;
+    background: var(--primary-light);
+    border-radius: 6px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.selected-count {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.cao-selector-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+}
+
+.cao-selector-item {
+    border-bottom: 1px solid var(--border-light);
+    transition: background-color 0.2s ease;
+}
+
+.cao-selector-item:last-child {
+    border-bottom: none;
+}
+
+.cao-selector-item:hover {
+    background-color: var(--hover-background);
+}
+
+.cao-selector-item.selected {
+    background-color: var(--primary-light);
+    border-left: 4px solid var(--primary-color);
+}
+
+.cao-checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    gap: 12px;
+    width: 100%;
+}
+
+.cao-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.cao-info {
+    flex: 1;
+}
+
+.cao-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+
+.cao-details {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.cao-sector, .cao-org, .cao-vakbond {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    background: var(--background-light);
+    border-radius: 4px;
+}
+
+.cao-sector {
+    background: var(--success-light);
+    color: var(--success-color);
+    font-weight: 500;
+}
+
+.cao-org {
+    background: var(--info-light);
+    color: var(--info-color);
+}
+
+.cao-vakbond {
+    background: var(--warning-light);
+    color: var(--warning-color);
+}
+
 /* CAO List Section */
 .cao-list-section {
     margin-bottom: 30px;
