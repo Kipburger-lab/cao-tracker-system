@@ -216,6 +216,7 @@ class TrackerManager {
     
     init() {
         this.setupEventListeners();
+        this.loadSavedCAOSelection();
         this.renderCaoSelector();
         this.renderCaoList();
         this.updateCurrentCaoInfo();
@@ -257,12 +258,51 @@ class TrackerManager {
         }
     }
     
-    saveCAOSelection() {
+    async saveCAOSelection() {
         const selectedIds = this.allCAOs.filter(cao => cao.selected).map(cao => cao.id);
+        
+        // Save to localStorage for immediate feedback
         localStorage.setItem('selectedCAOs', JSON.stringify(selectedIds));
+        
+        // Save to backend for persistence
+        try {
+            const response = await fetch('/api/cao-selection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ selectedCAOs: selectedIds })
+            });
+            
+            if (!response.ok) {
+                console.warn('Failed to save CAO selection to backend');
+            }
+        } catch (error) {
+            console.warn('Error saving CAO selection to backend:', error);
+        }
     }
-    
-    loadSavedCAOSelection() {
+
+    async loadSavedCAOSelection() {
+        try {
+            // Try to load from backend first
+            const response = await fetch('/api/cao-selection');
+            if (response.ok) {
+                const data = await response.json();
+                const savedSelection = data.selectedCAOs || [];
+                
+                if (savedSelection.length > 0) {
+                    this.allCAOs.forEach(cao => {
+                        cao.selected = savedSelection.includes(cao.id);
+                    });
+                    this.caoList = this.getSelectedCAOs();
+                    return;
+                }
+            }
+        } catch (error) {
+            console.warn('Error loading CAO selection from backend:', error);
+        }
+        
+        // Fallback to localStorage
         const savedSelection = JSON.parse(localStorage.getItem('selectedCAOs') || '[]');
         if (savedSelection.length > 0) {
             this.allCAOs.forEach(cao => {
